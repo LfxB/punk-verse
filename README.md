@@ -1,6 +1,10 @@
 # Punkverse
 
+![Website](https://img.shields.io/website/https/punkverse.onrender.com.svg?style=popout-square)
+
 View and search beer info in [Punk API](https://punkapi.com/documentation/v2).
+
+Currently deployed on punkverse.onrender.com
 
 ## Contributing
 

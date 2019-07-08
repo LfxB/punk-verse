@@ -4,7 +4,7 @@
 
 View and search beer info in [Punk API](https://punkapi.com/documentation/v2).
 
-Currently deployed on [punkverse.onrender.com](punkverse.onrender.com)
+Currently deployed on [punkverse.onrender.com](https://punkverse.onrender.com)
 
 ## Contributing
 

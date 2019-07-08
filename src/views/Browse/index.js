@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Segment, Pagination, Divider } from 'semantic-ui-react';
+import { Segment, Pagination, Divider, Message } from 'semantic-ui-react';
 import queryString from 'query-string';
 import loading from './../../assets/loading.svg';
 import BeerItems from '../../components/BeerItems.js';
@@ -14,6 +14,7 @@ class Browse extends React.Component {
         this.state = {
             items: [],
             shouldFetch: true,
+            displayError: false,
             totalPages: 2,
             prevSearchQuery: location.search,
         };
@@ -25,7 +26,7 @@ class Browse extends React.Component {
     */
     updatePageItems = () => {
         const { shouldFetch, prevSearchQuery } = this.state;
-        const { history, location } = this.props;
+        const { /*history,*/ location } = this.props;
         if (!shouldFetch && prevSearchQuery === location.search) return;
 
         console.log('Fetching page ', location.search);
@@ -51,8 +52,12 @@ class Browse extends React.Component {
                 let items = JSON.parse(responseBody);
 
                 if (items.length === 0) {
-                    location.search = '?page=1';
-                    history.push('/browse?page=1');
+                    // location.search = '?page=1';
+                    // history.push('/browse?page=1');
+                    this.setState({
+                        shouldFetch: false,
+                        displayError: true,
+                    });
                     return;
                 }
 
@@ -68,6 +73,7 @@ class Browse extends React.Component {
                         this.setState({
                             items,
                             shouldFetch: false,
+                            displayError: false,
                             totalPages: nextItems.length === 0 ? page : page + 1,
                             prevSearchQuery: location.search,
                         });
@@ -108,16 +114,30 @@ class Browse extends React.Component {
 
         this.setState({
             shouldFetch: true,
+            displayError: false,
         });
     };
 
+    displayError = () => {
+        const { displayError } = this.state;
+
+        if (!displayError) return null;
+
+        return (
+            <Message warning>
+                <Message.Header>No items matched your search term(s).</Message.Header>
+                <p>Please try another search.</p>
+            </Message>
+        )
+    }
+
     render = () => {
-        const { items, totalPages } = this.state;
+        const { items, totalPages, displayError } = this.state;
         const { location } = this.props;
 
         const parsed = queryString.parse(location.search);
 
-        if (items.length === 0) {
+        if (items.length === 0 && !displayError) {
             return (
                 <img
                     alt={'Loading...'}
@@ -132,6 +152,7 @@ class Browse extends React.Component {
 
         return (
             <Segment attached>
+                {this.displayError()}
                 <BeerItems items={items} dispatch={this.props.dispatch} />
                 <Divider />
                 <Pagination
